@@ -1,0 +1,31 @@
+<%- include('./layouts/header'); -%>
+
+    <div class="container-fluid">
+        <% var articles = JSON.parse(data_articles); if(articles!=null && articles.length > 0) { %>
+            <% articles.forEach(function(item, index){ %>
+                <article>
+                    <h2>
+                        <a href="/articles/view/<% if(item._id) { %><%= item._id %><% } %>">
+                            <% if(item.title) { %><%= item.title %><% } %>
+                        </a>
+                    </h2>
+                    <% var means =  item.tags; if(means!=null && means.length > 0) { %>
+                        <% means.forEach(function(item_mean, index){ %>
+                            <label class="label label-danger"><% if(item_mean) { %><%= item_mean %><% } %></label>
+                        <% }) %>
+                    <% } %><br>
+                    <% if(item.created_at) { %><%= get_time(item.created_at) %><% } %>
+                    
+                    <br>
+                    <a href="/articles/edit/<% if(item._id) { %><%= item._id %><% } %>">edit</a>
+                    <form action="/articles/delete" method="POST">
+                        <input type="hidden" name="id" value="<% if(item._id) { %><%= item._id %><% } %>">
+                        <button type="submit" class="btn-link">delete</button>
+                    </form>
+                </article>
+            <% }) %>
+        <% } %>
+        <hr>
+        <%= data_articles  %>
+    </div>
+<%- include('./layouts/footer'); -%>

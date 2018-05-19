@@ -1,0 +1,18 @@
+<% 
+  get_base_url = () => {
+    return 'http://127.0.0.1:3000';
+  } 
+ 
+  get_time = (value_time) => {
+    var time = new Date(value_time);
+    var d = time.getDate(); if(d.toString().length == 1) { d =  '0' + d }
+    var m = (time.getMonth() + 1); if(m.toString().length == 1) { m =  '0' + m }
+    var y = time.getFullYear();
+    var g = time.getHours(); if(g.toString().length == 1) { g =  '0' + g }
+    var a = g >= 12 ? 'pm' : 'am';
+    var i = time.getMinutes(); if(i.toString().length == 1) { i =  '0' + i }
+    var the_time = d + '/' + m + '/' + y + ' lúc ' + g + ':' + i + ' ' + a
+    return the_time;
+  }
+
+%>
