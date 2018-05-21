@@ -1,60 +1,102 @@
-const models = require('../models/Models.js');
-const Articles = models.Articles();
+var ArticlesModel = require('../models/ArticlesModel.js');
+var Articles = ArticlesModel.Articles();
 
-module.exports = (app, io) => {
-    app.get('/', (req, res) => {
-        res.render('index');
-    });
-    app.get('/articles', (req, res) => {
+var ArticlesController = {
+
+    // RESTful API
+    api_articles: (req, res) => {
         Articles.find({}, (err, result) => {
-            res.render('index', {
-                data_articles: JSON.stringify(result)
-            });
+            return res.json(result);
         });
-    });
-    app.get('/articles/view/:id', (req, res) => {
+    },
+    api_insert: (req, res) => {
+        var arr_data = new Object();
+        arr_data.title = req.body.title ? req.body.title : null;
+        arr_data.content = req.body.content ? req.body.content : null;
+        arr_data.tags = req.body.tags ? req.body.tags : null;
+        arr_data.created_at = new Date();
+        Articles.create(arr_data, (err, result) => {
+            return res.json(result);
+        });
+    },
+    api_edit: (req, res) => {
         var id = req.params.id;
         Articles.find({ _id: id }, (err, result) => {
-            res.json(result);
+            return res.json(result);
         });
-    });
-    app.get('/articles/create', (req, res) => {
+    },
+    api_update: (req, res) => {
+        var id = req.body.id;
+        console.log(id);
+        var arr_data = new Object();
+        arr_data.title = req.body.title ? req.body.title : null;
+        arr_data.content = req.body.content ? req.body.content : null;
+        arr_data.tags = req.body.tags ? req.body.tags : null;
+        arr_data.updated_at = new Date();
+        Articles.updateOne({ _id: id }, { $set: { arr_data } }, (err, result) => {
+            return res.json(result);
+        });
+    },
+    api_delete: (req, res) => {
+        var id = req.body.id;
+        Articles.deleteOne({ _id: id }, (err, result) => {
+            return res.json(result);
+        });
+    },
+    // end RESTful API
+
+    // CURD
+    index: (req, res) => {
+        res.redirect('/articles')
+    },
+    articles: (req, res) => {
+        Articles.find({}, (err, result) => {
+            return res.render('articles', {
+                data_articles: JSON.stringify(result) ? JSON.stringify(result) : null
+            });
+        });
+    },
+    create: (req, res) => {
         res.render('create');
-    });
-    app.post('/articles/create', (req, res) => {
-        var arr_article = new Object();
-        arr_article.title = req.body.title ? req.body.title : null;
-        arr_article.content = req.body.content ? req.body.content : null;
-        arr_article.tags = req.body.tags ? req.body.tags : null;
-        arr_article.created_at = new Date();
-        Articles.create(arr_article, (err, result) => {
+    },
+    insert: (req, res) => {
+        var arr_data = new Object();
+        arr_data.title = req.body.title ? req.body.title : null;
+        arr_data.content = req.body.content ? req.body.content : null;
+        arr_data.tags = req.body.tags ? req.body.tags : null;
+        arr_data.created_at = new Date();
+        Articles.create(arr_data, (err, result) => {
+            console.log(result);
             res.redirect('/articles')
         });
-    });
-    app.put('/articles/update', (req, res) => {
-        var arr_article = new Object();
-        arr_article.title = req.body.title ? req.body.title : null;
-        arr_article.content = req.body.content ? req.body.content : null;
-        arr_article.tags = req.body.tags ? req.body.tags : null;
-        arr_article.updated_at = new Date();
-        Articles.create(arr_article, (err, result) => {
-            console.log(result);
+    },
+    edit: (req, res) => {
+        var id = req.params.id;
+        Articles.find({ _id: id }, (err, result) => {
+            return res.render('edit', {
+                data_article: JSON.stringify(result) ? JSON.stringify(result) : null
+            });
         });
-    });
-    app.post('/articles/delete', (req, res) => {
+    },
+    update: (req, res) => {
+        var id = req.body.id;
+        var arr_data = new Object();
+        arr_data.title = req.body.title ? req.body.title : null;
+        arr_data.content = req.body.content ? req.body.content : null;
+        arr_data.tags = req.body.tags ? req.body.tags : null;
+        arr_data.updated_at = new Date();
+        Articles.findOneAndUpdate({ _id: id }, { $set: arr_data }, (err, result) => {
+            console.log(result);
+            res.redirect('/articles')
+        });
+    },
+    delete: (req, res) => {
         var id = req.body.id;
         Articles.deleteOne({ _id: id }, (err, result) => {
             res.redirect('/articles')
         });
-    });
+    }
 
-    // io.on('connection', (socket) => {
-    //     socket.on('sample', (sample) => {
-    //         socket.emit('sample', sample);
-    //     });
-
-    //     socket.on('disconnect', () => {
-    //         io.sockets.emit('sample', sample);
-    //     });
-    // });
+    // End CURD
 }
+module.exports = ArticlesController;
