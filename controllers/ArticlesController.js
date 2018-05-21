@@ -66,8 +66,7 @@ var ArticlesController = {
         arr_data.tags = req.body.tags ? req.body.tags : null;
         arr_data.created_at = new Date();
         Articles.create(arr_data, (err, result) => {
-            console.log(result);
-            res.redirect('/articles')
+            res.redirect('/articles/edit/' + result._id)
         });
     },
     edit: (req, res) => {
@@ -86,8 +85,7 @@ var ArticlesController = {
         arr_data.tags = req.body.tags ? req.body.tags : null;
         arr_data.updated_at = new Date();
         Articles.findOneAndUpdate({ _id: id }, { $set: arr_data }, (err, result) => {
-            console.log(result);
-            res.redirect('/articles')
+            res.redirect('/articles/edit/' + result._id)
         });
     },
     delete: (req, res) => {
@@ -96,7 +94,6 @@ var ArticlesController = {
             res.redirect('/articles')
         });
     }
-
     // End CURD
 }
 module.exports = ArticlesController;

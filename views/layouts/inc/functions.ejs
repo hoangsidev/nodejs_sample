@@ -3,6 +3,11 @@
     return 'http://127.0.0.1:3000';
   } 
  
+  get_description = (str, length) => {
+    var str_get_description = str.substring(0, length);
+    return str_get_description + '...';
+  }
+
   get_time = (value_time) => {
     var time = new Date(value_time);
     var d = time.getDate(); if(d.toString().length == 1) { d =  '0' + d }
@@ -14,5 +19,4 @@
     var the_time = d + '/' + m + '/' + y + ' lúc ' + g + ':' + i + ' ' + a
     return the_time;
   }
-
 %>
