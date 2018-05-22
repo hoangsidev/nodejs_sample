@@ -1,0 +1,119 @@
+<%- include('../layouts/inc/functions.ejs'); -%>
+    <!-- https://hoangsi.com/ -->
+    <!DOCTYPE html>
+    <html lang='en'>
+
+    <head>
+        <meta charset='UTF-8'>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+        <link rel="stylesheet" href="<%= get_admin_url(); %>/css/bootstrap.min.css">
+        <link rel="stylesheet" href="<%= get_admin_url(); %>/css/font-awesome.min.css">
+        <link rel="shortcut icon" href="<%= get_admin_url(); %>/images/favicon.ico" type="image/x-icon" />
+        <title>Sample</title>
+        <style>
+            html,
+            body,
+            #wrapper {
+                background: #222;
+                height: 100%;
+            }
+
+            #wrapper_login {
+                top: 30%;
+                position: relative;
+                -webkit-transform: translateY(-50%);
+                -ms-transform: translateY(-50%);
+                transform: translateY(-50%);
+            }
+
+            label {
+                font-weight: lighter;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container" id="wrapper">
+            <div id="wrapper_login">
+                <div class="panel col-md-4 col-md-offset-4">
+                    <div class="panel-body">
+                        <form id="app" action="/signup" method="post" v-on:submit.prevent="validate_form" ref="form">
+                            <div v-if="errors.length">
+                                <p>Please correct the following error(s):</p>
+                                <ul>
+                                    <li v-for="error in errors">{{ error }}</li>
+                                </ul>
+                            </div>
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" name="username" v-model="username" placeholder="Pick a username">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="text" class="form-control" name="email" v-model="email" placeholder="mail@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" name="password" v-model="password" placeholder="Create a password">
+                                <small>Use at least one letter, one numeral, and seven characters.</small>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default">Sign up</button>
+                            </div>
+                            <small>
+                                By clicking “Sign up”, you agree to our
+                                <a href="">terms of service</a> and
+                                <a href="">privacy statement</a>. We’ll occasionally send you account related emails.
+                            </small>
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="app1">
+            <button v-on:click="test">aasas</button>
+        </div>
+        <script src="<%= get_admin_url(); %>/js/jquery.min.js"></script>
+        <script src="<%= get_admin_url(); %>/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    username: null,
+                    email: null,
+                    password: null,
+                    errors: []
+                },
+                methods: {
+                    validate_form: function (e) {
+                        app.errors = []
+                        if (!this.username) this.errors.push("Name required.");
+
+                        if (!this.email) {
+                            this.errors.push("Email required.");
+                        } else if (!this.validate_email(this.email)) {
+                            this.errors.push("Valid email required.");
+                        }
+                        if (!this.password) this.errors.push("Password required.");
+                        if (!this.errors.length) return this.$refs.form.submit();
+
+                        
+                    },
+                    validate_email: function (email) {
+                        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                        return re.test(email);
+                    },
+                    validate_password: function (password) {
+                        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                        return re.test(password);
+                    }
+                }
+            })
+
+        </script>
+    </body>
+
+    </html>

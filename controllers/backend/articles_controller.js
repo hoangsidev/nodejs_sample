@@ -45,9 +45,7 @@ var articles_controller = {
     // end RESTful API
 
     // CURD
-    dashboard: (req, res) => {
-        res.render('index');
-    },
+   
     articles: (req, res, next) => { // list all & search
         var key_search = req.query.search ? req.query.search : null;
         var per_page = 20;
@@ -59,7 +57,7 @@ var articles_controller = {
                 .limit(per_page)
                 .exec(function (err, result) {
                     m_articles.count().exec(function (err, count) {
-                        return res.render('backend/articles', {
+                        return res.render('backend/articles/articles', {
                             data_articles: JSON.stringify(result) ? JSON.stringify(result) : null,
                             current: page,
                             pages: Math.ceil(count / per_page),
@@ -87,7 +85,7 @@ var articles_controller = {
                             { 'tags': new RegExp('^' + key_search + '$', "i") }
                         ]
                     }).count().exec(function (err, count) {
-                        return res.render('backend/articles', {
+                        return res.render('backend/articles/articles', {
                             data_articles: JSON.stringify(result) ? JSON.stringify(result) : null,
                             current: page,
                             pages: Math.ceil(count / per_page),
@@ -101,7 +99,7 @@ var articles_controller = {
         }
     },
     create: (req, res) => {
-        res.render('backend/create');
+        res.render('backend/articles/create');
     },
     insert: (req, res) => {
         var arr_data = new Object();
@@ -116,7 +114,7 @@ var articles_controller = {
     edit: (req, res) => {
         var id = req.params.id;
         m_articles.find({ _id: id }, (err, result) => {
-            return res.render('backend/edit', {
+            return res.render('backend/articles/edit', {
                 data_article: JSON.stringify(result) ? JSON.stringify(result) : null
             });
         });

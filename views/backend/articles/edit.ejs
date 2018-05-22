@@ -1,4 +1,4 @@
-<%- include('./layouts/header'); -%>
+<%- include('../layouts/header.ejs'); -%>
     <div class="container">
             <% var article = JSON.parse(data_article); if(article!=null && article.length > 0) { %>
                 <% article.forEach(function(item, index){ %>
@@ -27,4 +27,4 @@
         <% }) %>
         <% } %>
     </div>
-<%- include('./layouts/footer'); -%>
+<%- include('../layouts/footer'); -%>

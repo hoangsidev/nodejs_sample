@@ -14,7 +14,9 @@ app.use(express.static('./assets')); // thư mục public chứa hình, css,...
 app.set('view engine', 'ejs'); // đặt template engine là EJS
 app.set('views', './views'); // trỏ vào thư mục view để chứa các file template
 /* --------------------------------------------------------------------------------------- */
+var backend_controller = require('./controllers/backend/backend_controller.js');
 var articles_controller = require('./controllers/backend/articles_controller.js');
+var users_controller = require('./controllers/backend/users_controller.js');
 var home_controller = require('./controllers/frontend/home_controller.js');
 /* --------------------------------------------------------------------------------------- */
 // RESTful API
@@ -28,8 +30,9 @@ app.route('/api/articles/:id')
 // End RESTful API
 
 // BACKEND
-app.route('/backend')
-    .get(articles_controller.dashboard)
+// articles
+app.route('/backend/dashboard')
+    .get(backend_controller.dashboard)
 
 app.route('/backend/articles')
     .get(articles_controller.articles)
@@ -49,12 +52,26 @@ app.route('/backend/articles/update')
 
 app.route('/backend/articles/delete')
     .delete(articles_controller.delete)
+// end articles
+
+// users
+app.route('/signin')
+    .get(users_controller.form_signin)
+    .post(users_controller.signin)
+app.route('/signup')
+    .get(users_controller.form_signup)
+    .post(users_controller.signup)
+app.route('/signout')
+    .post(users_controller.signout)
+// end users
+
 // End BACKEND
 
 // FRONTEND
 app.route('/')
     .get(home_controller.index)
 // End FRONTEND
+
 /* --------------------------------------------------------------------------------------- */
 // io.on('connection', (socket) => {
 //     console.log(socket.id);
