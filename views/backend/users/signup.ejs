@@ -30,6 +30,66 @@
             label {
                 font-weight: lighter;
             }
+
+            .tooltip-arrow {
+                left: 10% !important;
+                border-bottom-color: #ca2f2f !important;
+
+            }
+
+            .tooltip-inner {
+                width: 100% !important;
+                background: #ca2f2f;
+                max-width: 320px;
+            }
+
+            .error {
+                /* width: 100% !important; */
+                position: absolute;
+                background: #ca2f2f;
+                max-width: 320px;
+                padding: 3px 8px;
+                margin-top: 5px;
+                color: #fff;
+                border-radius: 4px;
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                font-size: 12px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 1.42857143;
+                text-align: left;
+                text-align: start;
+                text-decoration: none;
+                text-shadow: none;
+                text-transform: none;
+                letter-spacing: normal;
+                word-break: normal;
+                word-spacing: normal;
+                word-wrap: normal;
+                white-space: normal;
+                line-break: auto;
+                opacity: 0.9;
+                display: inline-block;
+                z-index: 99;
+            }
+
+            .error::before {
+                content: "";
+                border-bottom-color: #ca2f2f !important;
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-color: transparent;
+                border-style: solid;
+                margin-top: -8px;
+                margin-left: 15px;
+                border-width: 0 5px 5px;
+                opacity: 0.9;
+            }
+
+            .form-group {
+                position: relative;
+            }
         </style>
     </head>
 
@@ -39,27 +99,25 @@
                 <div class="panel col-md-4 col-md-offset-4">
                     <div class="panel-body">
                         <form id="app" action="/signup" method="post" v-on:submit.prevent="validate_form" ref="form">
-                            <div v-if="errors.length">
-                                <p>Please correct the following error(s):</p>
-                                <ul>
-                                    <li v-for="error in errors">{{ error }}</li>
-                                </ul>
-                            </div>
                             <div class="form-group">
                                 <label for="username">Username</label>
-                                <input type="text" class="form-control" name="username" v-model="username" placeholder="Pick a username">
+                                <input type="text" class="form-control" name="username" v-model="username" v-on:input="realtime_validate" ref="username" autocomplete="off"
+                                    placeholder="Pick a username">
+                                <span v-if="error_username" class="error ">{{ error_username }}</span>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="text" class="form-control" name="email" v-model="email" placeholder="mail@example.com">
+                                <input type="text" class="form-control" name="email" v-model="email" v-on:input="realtime_validate" ref="email" placeholder="mail@example.com">
+                                <span v-if="error_email" class="error ">{{ error_email }}</span>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" name="password" v-model="password" placeholder="Create a password">
+                                <input type="password" class="form-control" name="password" v-model="password" v-on:input="realtime_validate" ref="password" placeholder="Create a password">
+                                <span v-if="error_password" class="error ">{{ error_password }}</span>
                                 <small>Use at least one letter, one numeral, and seven characters.</small>
                             </div>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-default">Sign up</button>
+                                <button type="submit" class="btn btn-default" v-on:click="submit_validate">Sign up</button>
                             </div>
                             <small>
                                 By clicking “Sign up”, you agree to our
@@ -72,9 +130,6 @@
                 </div>
             </div>
         </div>
-        <div id="app1">
-            <button v-on:click="test">aasas</button>
-        </div>
         <script src="<%= get_admin_url(); %>/js/jquery.min.js"></script>
         <script src="<%= get_admin_url(); %>/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
@@ -85,30 +140,59 @@
                     username: null,
                     email: null,
                     password: null,
-                    errors: []
+                    errors: [],
+                    error_username: null,
+                    error_email: null, 
+                    error_password: null
                 },
                 methods: {
-                    validate_form: function (e) {
-                        app.errors = []
-                        if (!this.username) this.errors.push("Name required.");
+                    realtime_validate: function () {
+                        this.errors = []; this.error_username = null; this.error_email = null; this.error_password = null
+                        if (!this.username) {
+                            this.errors.push(1);
+                            this.error_username = "Username required."; this.$refs.username.focus();
+                        } else if (!this.validate_username(this.username)) {
+                            this.error_username = "Username may only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen."; this.$refs.username.focus();
+                            this.errors.push(1);
+                        }
 
                         if (!this.email) {
-                            this.errors.push("Email required.");
+                            this.errors.push(1);
+                            this.error_email = "Email required.";
                         } else if (!this.validate_email(this.email)) {
-                            this.errors.push("Valid email required.");
+                            this.errors.push(1);
+                            this.error_email = "Valid email required.";
                         }
-                        if (!this.password) this.errors.push("Password required.");
-                        if (!this.errors.length) return this.$refs.form.submit();
 
-                        
+                        if (!this.password) {
+                            this.errors.push(1);
+                            this.error_password = "Password required.";
+                        } else if (!this.validate_password(this.password)) {
+                            this.errors.push(1);
+                            this.error_password = "Password must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters";
+                        }
+                    },
+                    submit_validate: function () {
+                        this.realtime_validate();
+                        if (!this.errors.length) return this.$refs.form.submit();
+                    },
+                    validate_username: function (username) {
+                        var re = /^[a-zA-Z0-9]+$/;
+                        return re.test(username);
                     },
                     validate_email: function (email) {
                         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                         return re.test(email);
                     },
                     validate_password: function (password) {
-                        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                        var re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
                         return re.test(password);
+                    },
+                    mounted() {
+
+                    },
+                    updated() {
+
                     }
                 }
             })
