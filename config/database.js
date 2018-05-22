@@ -1,5 +1,5 @@
-var Models = {
-    ConnectMongoDB: (req, res) => {
+var db = {
+    mongodb: () => {
         var mongoose = require('mongoose');
         mongoose.connect('mongodb://127.0.0.1:27017/posts');
         var db_connect = mongoose.connection;
@@ -8,4 +8,4 @@ var Models = {
         return mongoose;
     }
 }
-module.exports = Models;
+module.exports = db;

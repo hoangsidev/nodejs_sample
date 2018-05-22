@@ -2,44 +2,58 @@
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
-const methodOverride = require('method-override')
+const method_override = require('method-override')
 const io = require('socket.io')(server);
-const bodyParser = require('body-parser'); // phải dùng cái này mới dùng được Post
+const body_parser = require('body-parser'); // phải dùng cái này mới dùng được Post
 server.listen(process.env.PORT || 3000, () => { console.log('Server runing with port 3000 !!!!'); });
 /* --------------------------------------------------------------------------------------- */
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-app.use(methodOverride('_method'));
+app.use(body_parser.json()); // support json encoded bodies
+app.use(body_parser.urlencoded({ extended: true })); // support encoded bodies
+app.use(method_override('_method'));
 app.use(express.static('./assets')); // thư mục public chứa hình, css,...
 app.set('view engine', 'ejs'); // đặt template engine là EJS
 app.set('views', './views'); // trỏ vào thư mục view để chứa các file template
 /* --------------------------------------------------------------------------------------- */
-var ArticlesController = require('./controllers/ArticlesController.js');
+var articles_controller = require('./controllers/backend/articles_controller.js');
 /* --------------------------------------------------------------------------------------- */
 // RESTful API
 app.route('/api/articles')
-    .get(ArticlesController.api_articles)
-    .post(ArticlesController.api_insert)
+    .get(articles_controller.api_articles)
+    .post(articles_controller.api_insert)
 app.route('/api/articles/:id')
-    .get(ArticlesController.api_edit)
+    .get(articles_controller.api_edit)
     .post()
-    .put(ArticlesController.api_update)
-    .delete(ArticlesController.api_delete);
+    .put(articles_controller.api_update)
+    .delete(articles_controller.api_delete)
 // End RESTful API
 
-// CURD
-app.route('/articles')
-    .get(ArticlesController.articles)
-app.route('/articles/create')
-    .get(ArticlesController.create)
-    .post(ArticlesController.insert)
-app.route('/articles/edit/:id')
-    .get(ArticlesController.edit)
-app.route('/articles/update')
-    .put(ArticlesController.update)
-app.route('/articles/delete')
-    .delete(ArticlesController.delete)
-// End CURD
+// BACKEND
+app.route('/backend')
+    .get(articles_controller.dashboard)
+
+app.route('/backend/articles')
+    .get(articles_controller.articles)
+
+app.route('/backend/articles/page/:page')
+    .get(articles_controller.articles)
+
+app.route('/backend/articles/create')
+    .get(articles_controller.create)
+    .post(articles_controller.insert)
+
+app.route('/backend/articles/edit/:id')
+    .get(articles_controller.edit)
+
+app.route('/backend/articles/update')
+    .put(articles_controller.update)
+    
+app.route('/backend/articles/delete')
+    .delete(articles_controller.delete)
+// End BACKEND
+
+// FRONTEND
+
+// End FRONTEND
 /* --------------------------------------------------------------------------------------- */
 // io.on('connection', (socket) => {
 //     console.log(socket.id);

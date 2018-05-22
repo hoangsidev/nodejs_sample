@@ -2,7 +2,7 @@
     <div class="container">
             <% var article = JSON.parse(data_article); if(article!=null && article.length > 0) { %>
                 <% article.forEach(function(item, index){ %>
-           <form action="/articles/update?_method=PUT" method="POST">
+           <form action="<%= get_admin_url(); %>/articles/update?_method=PUT" method="POST">
                 <input type="hidden" name="id" value="<% if(item._id) { %><%= item._id %><% } %>">
             <div class="form-group">
                 <label>Title</label>

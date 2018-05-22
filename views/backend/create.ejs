@@ -1,6 +1,6 @@
 <%- include('./layouts/header'); -%>
     <div class="container">
-        <form action="/articles/create" method="post">
+        <form action="<%= get_admin_url(); %>/articles/create" method="post">
             <div class="form-group">
                 <label>Title</label>
                 <input type="text" name="title" class="form-control" required>
