@@ -114,7 +114,7 @@
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" name="password" v-model="password" v-on:input="realtime_validate" ref="password" placeholder="Create a password">
                                 <span v-if="error_password" class="error ">{{ error_password }}</span>
-                                <small>Use at least one letter, one numeral, and seven characters.</small>
+                                <small>Use at least one letter, one numeral, and six characters.</small>
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-default" v-on:click="submit_validate">Sign up</button>
