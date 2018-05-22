@@ -1,5 +1,4 @@
-var articles_model = require('../../models/backend/articles_model.js');
-var m_articles = articles_model.articles();
+var m_articles = require('../../models/backend/articles_model.js');
 
 var articles_controller = {
 
@@ -51,7 +50,7 @@ var articles_controller = {
     },
     articles: (req, res, next) => { // list all & search
         var key_search = req.query.search ? req.query.search : null;
-        var per_page = 2;
+        var per_page = 20;
         var page = req.params.page || 1;
         var page_slug = 'articles'; // khai báo slug để sử dụng lại pagination nhiều lần
         if (!key_search) {
@@ -64,7 +63,8 @@ var articles_controller = {
                             data_articles: JSON.stringify(result) ? JSON.stringify(result) : null,
                             current: page,
                             pages: Math.ceil(count / per_page),
-                            page_slug: page_slug ? page_slug : null
+                            page_slug: page_slug ? page_slug : null,
+                            paginate : count > per_page ? true : false
                         });
                     });
                 });
@@ -93,7 +93,8 @@ var articles_controller = {
                             pages: Math.ceil(count / per_page),
                             page_slug: page_slug ? page_slug : null,
                             key_search: key_search ? key_search : null,
-                            count_result: result.length ? result.length : null
+                            count_result: count ? count : null,
+                            paginate : count > per_page ? true : false
                         });
                     });
                 });

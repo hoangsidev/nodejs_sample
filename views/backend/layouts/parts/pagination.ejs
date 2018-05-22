@@ -1,3 +1,4 @@
+<% if(paginate) { %>
 <% if(typeof key_search !== 'undefined' && key_search!='') { %>
     <% if (pages > 0) { %>
         <ul class="pagination pagination-sm pull-right wrapper_pagination">
@@ -64,4 +65,5 @@
                 <li><a href="<%= get_admin_url() %>/<% if(page_slug) { %><%= page_slug %><% } %>/page/<%= pages %>">Trang cuối</a></li>
             <% } %>
         </ul>
+<% } %>
 <% } %>

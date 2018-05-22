@@ -15,6 +15,7 @@ app.set('view engine', 'ejs'); // đặt template engine là EJS
 app.set('views', './views'); // trỏ vào thư mục view để chứa các file template
 /* --------------------------------------------------------------------------------------- */
 var articles_controller = require('./controllers/backend/articles_controller.js');
+var home_controller = require('./controllers/frontend/home_controller.js');
 /* --------------------------------------------------------------------------------------- */
 // RESTful API
 app.route('/api/articles')
@@ -22,7 +23,6 @@ app.route('/api/articles')
     .post(articles_controller.api_insert)
 app.route('/api/articles/:id')
     .get(articles_controller.api_edit)
-    .post()
     .put(articles_controller.api_update)
     .delete(articles_controller.api_delete)
 // End RESTful API
@@ -46,13 +46,14 @@ app.route('/backend/articles/edit/:id')
 
 app.route('/backend/articles/update')
     .put(articles_controller.update)
-    
+
 app.route('/backend/articles/delete')
     .delete(articles_controller.delete)
 // End BACKEND
 
 // FRONTEND
-
+app.route('/')
+    .get(home_controller.index)
 // End FRONTEND
 /* --------------------------------------------------------------------------------------- */
 // io.on('connection', (socket) => {
