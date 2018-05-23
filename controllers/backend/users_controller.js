@@ -8,17 +8,12 @@ var users_controller = {
         res.render('backend/users/signin.ejs');
     },
     signin: (username, password) => {
-        var password_md5 = md5(password);
-        m_users.find({
+        m_users.findOne({
             username: username,
-            password: password_md5
+            password: md5(password)
         }).exec(function (err, result) {
-            if (result.length == 1) {
-                console.log('ok');
-            }
+            if (result) { console.log('Đã đăng nhập'); }
         });
-
-
     },
     form_signup: (req, res) => {
         res.render('backend/users/signup.ejs');
@@ -56,25 +51,50 @@ var users_controller = {
     },
     form_password_reset: (req, res) => {
         var key_password_reset = req.query.key ? req.query.key : null;
+        // console.log(key_password_reset);
         if (!key_password_reset) {
             res.render('backend/users/password_reset.ejs');
         } else {
-            res.render('backend/users/change_password_reset.ejs');
-
-            console.log(key_password_reset);
-
+            m_users.findOne({ // nếu key đúng mới hiện form
+                key_password_reset: key_password_reset
+            }).exec(function (err, result) {
+                // console.log(result);
+                if (result) {
+                    res.render('backend/users/change_password_reset.ejs', {
+                        key_password_reset: key_password_reset ? key_password_reset : null
+                    });
+                } else {
+                    res.json('Link không hợp lệ');
+                }
+            });
         }
+    },
+    update_password_reset: (req, res) => {
+        // console.log(req.query._method);
+        var key_password_reset = req.query.key ? req.query.key : null;
+        var password = req.body.password ? req.body.password : null;
+        // console.log(key_password_reset);
+        // console.log(password);
+        m_users.findOneAndUpdate({ key_password_reset: key_password_reset }, { $set: { password: md5(password) } }, (err, result) => {
+            // console.log(result);
+            if (result) {
+                // console.log('Thành công'); // sau khi đổi thành công thì đổi key_password_reset để khỏi truy cập vào link cũ
+                var rand = Math.random().toString();
+                m_users.findOneAndUpdate({ key_password_reset: key_password_reset }, { $set: { key_password_reset: md5(rand) } }, (err, result) => {
+                    // if(result) { console.log('Đã đổi key'); }
+                });
+                res.redirect('/signin')
+            } else {
+                res.json('eeeeeeeee')
+            }
+        });
 
     },
     password_reset: (req, res) => {
-
         var email = req.body.email ? req.body.email : null;
-        m_users.find({
-            email: email
-        }).exec(function (err, result) {
+        m_users.findOne({ email: email }).exec(function (err, result) {
             // console.log(result);
-            if (result.length >= 1) {
-
+            if (result) {
                 var rand = Math.random().toString();
                 m_users.findOneAndUpdate({ email: email }, { $set: { key_password_reset: md5(rand) } }, (err, result) => {
                     // console.log(result);
@@ -104,11 +124,6 @@ var users_controller = {
                 console.log('Email khong ton tai');
             }
         });
-
-
-
-
-
     },
 }
 module.exports = users_controller;

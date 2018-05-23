@@ -66,6 +66,7 @@ app.route('/signout')
 app.route('/password_reset')
     .get(users_controller.form_password_reset)
     .post(users_controller.password_reset)
+    .put(users_controller.update_password_reset)
 // end users
 
 // End BACKEND
