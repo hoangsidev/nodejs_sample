@@ -63,6 +63,9 @@ app.route('/signup')
     .post(users_controller.signup)
 app.route('/signout')
     .post(users_controller.signout)
+app.route('/password_reset')
+    .get(users_controller.form_password_reset)
+    .post(users_controller.password_reset)
 // end users
 
 // End BACKEND
@@ -73,14 +76,19 @@ app.route('/')
 // End FRONTEND
 
 /* --------------------------------------------------------------------------------------- */
-// io.on('connection', (socket) => {
-//     console.log(socket.id);
-//     socket.on('sample', (sample) => {
-//         socket.emit('sample', sample);
-//     });
+io.on('connection', (socket) => {
 
-//     socket.on('disconnect', () => {
-//         io.sockets.emit('sample', sample);
-//     });
-// });
+    socket.on('guest_send_account', (username, password) => {
+        var check_signin = users_controller.signin(username, password);
+        // check_signin.exec(function (err, result) {
+        //     // console.log(result.length);
+        //     socket.emit('ser_result_signin', result.length);
+        // })
+
+    });
+
+    socket.on('disconnect', () => {
+        // io.sockets.emit('sample', sample);
+    });
+});
 /* --------------------------------------------------------------------------------------- */

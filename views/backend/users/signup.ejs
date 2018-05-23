@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="<%= get_admin_url(); %>/css/bootstrap.min.css">
         <link rel="stylesheet" href="<%= get_admin_url(); %>/css/font-awesome.min.css">
         <link rel="shortcut icon" href="<%= get_admin_url(); %>/images/favicon.ico" type="image/x-icon" />
-        <title>Sample</title>
+        <title>Sign up</title>
         <style>
             html,
             body,
@@ -98,27 +98,32 @@
             <div id="wrapper_login">
                 <div class="panel col-md-4 col-md-offset-4">
                     <div class="panel-body">
-                        <form id="app" action="/signup" method="post" v-on:submit.prevent="validate_form" ref="form">
+                        <form id="app" action="/signup" method="post" v-on:submit.prevent="submit_validate" ref="form">
                             <div class="form-group">
                                 <label for="username">Username</label>
-                                <input type="text" class="form-control" name="username" v-model="username" v-on:input="realtime_validate" ref="username" autocomplete="off"
+                                <input type="text" class="form-control" name="username" v-model="username" v-on:input="realtime_validate" v-focus autocomplete="off"
                                     placeholder="Pick a username">
-                                <span v-if="error_username" class="error ">{{ error_username }}</span>
+                                <span v-if="err_username" class="error ">{{ err_username }}</span>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="text" class="form-control" name="email" v-model="email" v-on:input="realtime_validate" ref="email" placeholder="mail@example.com">
-                                <span v-if="error_email" class="error ">{{ error_email }}</span>
+                                <input type="text" class="form-control" name="email" v-model="email" v-on:input="realtime_validate" autocomplete="off" placeholder="mail@example.com">
+                                <span v-if="err_email" class="error ">{{ err_email }}</span>
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" name="password" v-model="password" v-on:input="realtime_validate" ref="password" placeholder="Create a password">
-                                <span v-if="error_password" class="error ">{{ error_password }}</span>
+                                <input type="password" class="form-control" name="password" v-model="password" v-on:input="realtime_validate" autocomplete="off"
+                                    placeholder="Create a password">
+                                <span v-if="err_password" class="error ">{{ err_password }}</span>
                                 <small>Use at least one letter, one numeral, and six characters.</small>
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-default" v-on:click="submit_validate">Sign up</button>
+                                <small style="margin-top: 20px;" class="pull-right">Already have an account?
+                                    <a href="/signin">Sign in</a>
+                                </small>
                             </div>
+                            <hr style="margin: 0 0 10px 0">
                             <small>
                                 By clicking “Sign up”, you agree to our
                                 <a href="">terms of service</a> and
@@ -132,67 +137,59 @@
         </div>
         <script src="<%= get_admin_url(); %>/js/jquery.min.js"></script>
         <script src="<%= get_admin_url(); %>/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+        <script src="<%= get_admin_url(); %>/js/vue.min.js"></script>
         <script>
+            Vue.directive('focus', {
+                inserted: function (el) {
+                    el.focus()
+                }
+            });
             var app = new Vue({
                 el: '#app',
                 data: {
                     username: null,
                     email: null,
                     password: null,
-                    errors: [],
-                    error_username: null,
-                    error_email: null, 
-                    error_password: null
+                    err_username: null,
+                    err_email: null,
+                    err_password: null
                 },
                 methods: {
                     realtime_validate: function () {
-                        this.errors = []; this.error_username = null; this.error_email = null; this.error_password = null
+                        this.err_username = null; this.err_email = null; this.err_password = null
                         if (!this.username) {
-                            this.errors.push(1);
-                            this.error_username = "Username required."; this.$refs.username.focus();
-                        } else if (!this.validate_username(this.username)) {
-                            this.error_username = "Username may only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen."; this.$refs.username.focus();
-                            this.errors.push(1);
+                            this.err_username = "Username required.";
+                        } else if (!this.valid_username(this.username)) {
+                            this.err_username = "Username may only contain alphanumeric characters or single hyphens, and cannot begin or end with a hyphen.";
                         }
 
                         if (!this.email) {
-                            this.errors.push(1);
-                            this.error_email = "Email required.";
-                        } else if (!this.validate_email(this.email)) {
-                            this.errors.push(1);
-                            this.error_email = "Valid email required.";
+                            this.err_email = "Email required.";
+                        } else if (!this.valid_email(this.email)) {
+                            this.err_email = "Valid email required.";
                         }
 
                         if (!this.password) {
-                            this.errors.push(1);
-                            this.error_password = "Password required.";
-                        } else if (!this.validate_password(this.password)) {
-                            this.errors.push(1);
-                            this.error_password = "Password must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters";
+                            this.err_password = "Password required.";
+                        } else if (!this.valid_password(this.password)) {
+                            this.err_password = "Password must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters";
                         }
                     },
                     submit_validate: function () {
                         this.realtime_validate();
-                        if (!this.errors.length) return this.$refs.form.submit();
+                        if (!this.err_username && !this.err_email && !this.err_password) return this.$refs.form.submit();
                     },
-                    validate_username: function (username) {
+                    valid_username: function (username) {
                         var re = /^[a-zA-Z0-9]+$/;
                         return re.test(username);
                     },
-                    validate_email: function (email) {
+                    valid_email: function (email) {
                         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                         return re.test(email);
                     },
-                    validate_password: function (password) {
+                    valid_password: function (password) {
                         var re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
                         return re.test(password);
-                    },
-                    mounted() {
-
-                    },
-                    updated() {
-
                     }
                 }
             })
