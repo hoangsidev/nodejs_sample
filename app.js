@@ -76,20 +76,25 @@ app.route('/')
     .get(home_controller.index)
 // End FRONTEND
 
+
+
+
+module.exports = function pri_app(app, io) {};
 /* --------------------------------------------------------------------------------------- */
-io.on('connection', (socket) => {
+// io.on('connection', (socket) => {
 
-    socket.on('guest_send_account', (username, password) => {
-        var check_signin = users_controller.signin(username, password);
-        // check_signin.exec(function (err, result) {
-        //     // console.log(result.length);
-        //     socket.emit('ser_result_signin', result.length);
-        // })
+//     socket.on('guest_send_account', (username, password) => {
+//         var check_signin = users_controller.signin(username, password);
+//         // check_signin.exec(function (err, result) {
+//         //     // console.log(result.length);
+//         //     socket.emit('ser_result_signin', result.length);
+//         // })
 
-    });
+//     });
 
-    socket.on('disconnect', () => {
-        // io.sockets.emit('sample', sample);
-    });
-});
+//     socket.on('disconnect', () => {
+//         // io.sockets.emit('sample', sample);
+//     });
+// });
+
 /* --------------------------------------------------------------------------------------- */

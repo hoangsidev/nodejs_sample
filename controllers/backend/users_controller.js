@@ -3,7 +3,25 @@ var md5 = require('md5');
 var nodemailer = require('nodemailer');
 
 
+var app_pri = require('../../app.js');
+
+
 var users_controller = {
+    test2 : () => {
+        console.log(22);
+    },
+    valid_username: (username) => {
+        var re = /^[a-zA-Z0-9]+$/;
+        return re.test(username);
+    },
+    valid_email: (email) => {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    },
+    valid_password: (password) => {
+        var re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+        return re.test(password);
+    },
     form_signin: (req, res) => {
         res.render('backend/users/signin.ejs');
     },
@@ -17,21 +35,9 @@ var users_controller = {
     },
     form_signup: (req, res) => {
         res.render('backend/users/signup.ejs');
+        app_pri
     },
     signup: (req, res) => {
-        valid_username: (username) => {
-            var re = /^[a-zA-Z0-9]+$/;
-            return re.test(username);
-        };
-        valid_email: (email) => {
-            var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(email);
-        };
-        valid_password: (password) => {
-            var re = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
-            return re.test(password);
-        }
-
         var arr_data = new Object();
         arr_data.username = req.body.username ? req.body.username : null;
         arr_data.email = req.body.email ? req.body.email : null;
